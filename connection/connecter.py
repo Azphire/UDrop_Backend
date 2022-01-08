@@ -5,7 +5,7 @@ import json
 import os
 
 
-def execute(sql: str):
+def execute(sql: str, param=None):
     base = os.path.dirname(os.path.abspath(__file__))
     with open(base + '/mysqlConfig.json', 'r', encoding='utf8')as conf:
         mysql_info = json.load(conf)
@@ -15,7 +15,11 @@ def execute(sql: str):
                          password=mysql_info["password"],
                          database=mysql_info["database"])
     cursor = db.cursor()
-    cursor.execute(sql)
+    if param:
+        cursor.execute(sql, param)
+    else:
+        cursor.execute(sql)
     data = cursor.fetchall()
+    db.commit()
     db.close()
     return data
