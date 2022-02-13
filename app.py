@@ -29,8 +29,10 @@ def login():
             return "Failed"
 
 
-# get: name
-# return: exist or not exist
+# 1.2 check_existed_user
+# param: [name: String]
+# return:
+# "Exist", "Not exist", "Failed"
 @app.route('/user/name', methods=["GET"])
 def get_name():
     if request.method == "GET":
@@ -39,15 +41,18 @@ def get_name():
             sql = "SELECT userId FROM User WHERE name =%s"
             data = connecter.execute(sql, args["name"])
             if len(data) > 0:
-                return "exist"
+                return "Exist"
             else:
-                return "not exist"
+                return "Not exist"
         except:
             return "Failed"
 
 
-# form: name, password
-# return: success, userId
+# 1.1 add_new_user
+# form: [name: String, password: String]
+# return:
+# user_id: Integer
+# added: Integer: 0, new user added; 1, not added (exist)
 @app.route('/user/register', methods=["POST"])
 def register():
     if request.method == "POST":
@@ -58,35 +63,71 @@ def register():
             connecter.execute(sql, param)
             sql = "SELECT userId FROM User WHERE name =%s"
             data = connecter.execute(sql, form["name"])
-            return_json = {"userId": "", "success": "no"}
+            return_json = {"user_id": "", "added": 0}
             if data:
-                return_json["userId"] = data[0][0]
-                return_json["success"] = "yes"
+                return_json["user_id"] = data[0][0]
+                return_json["added"] = 1
             return jsonify(return_json)
         except:
             return "Failed"
 
 
-# args: userId
-# return: json
-@app.route('/user/info', methods=["GET", "POST"])
-def info():
+# 1.3 get_user_info
+# form: (user_id: Int)
+# return: (name: String, user_motto: String, learned_days: Int)
+
+# 1.4 change_user_info
+# param: (user_id: Int, name: String, user_motto: String)
+# return:
+# "Failed", "Success"
+@app.route('/user/basic_info', methods=["GET", "POST"])
+def basicInfo():
     if request.method == "GET":
         args = request.args.to_dict()
         try:
-            sql = "SELECT * FROM User WHERE userId=" + args["userId"]
+            sql = "SELECT * FROM User WHERE userId=" + args["user_id"]
             data = connecter.execute(sql)[0]
             if data:
-                return_json = data_parser.into_user(data)
+                info = data_parser.user(data)
+                return_json = {
+                    "user_name": info.name,
+                    "user_motto": info.motto,
+                    "learned_days": info.learnedDays
+                }
                 return jsonify(return_json)
         except:
             return "Failed"
 
-    # TODO: 修改数据的逻辑，注意数字单独转一下
     if request.method == "POST":
         form = request.form.to_dict()
-        pass
+        try:
+            sql = "UPDATE User SET name=%s, motto=%s WHERE userId =" + str(form["user_id"])
+            param = (form["name"], form["user_motto"])
+            connecter.execute(sql, param)
+            return "Success"
+        except:
+            return "Failed"
 
+# 2.1 get_schedule
+# param: (user_id: Int)
+# return: (new_list: Array, review_list: Array)
+# new_list: 今日所有需要新学的课文，每个课文信息中包含是否已背诵
+# review_list: 今日所有需要复习的课文，每个课文信息中包含是否已背诵
+@app.route('/study/schedule', methods=["GET"])
+def schedule():
+    # TODO：code
+    if request.method == "GET":
+        args = request.args.to_dict()
+        try:
+            userId = args["user_id"]
+            print(userId)
+            result = {
+                "new_list": [{"title": "静夜思", "done": 1}, {"title": "出师表", "done": 0}, {"title": "蜀道难", "done": 0}],
+                "review_list": [{"title": "离骚", "done": 0}, {"title": "桃花源记", "done": 1}]
+            }
+            return jsonify(result)
+        except:
+            return "Failed"
 
 if __name__ == '__main__':
     app.run()
