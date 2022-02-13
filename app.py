@@ -19,11 +19,11 @@ def login():
         try:
             sql = "SELECT userId, password FROM User WHERE name=%s"
             data = connecter.execute(sql, form["name"])
-            return_json = {"userId": "", "success": "no"}
+            return_json = {"userId": -1, "success": 0}
             if (data):
                 if (data[0][1] == form["password"]):
                     return_json["userId"] = data[0][1]
-                    return_json["success"] = "yes"
+                    return_json["success"] = 1
             return jsonify(return_json)
         except:
             return "Failed"
