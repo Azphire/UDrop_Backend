@@ -22,7 +22,7 @@ def login():
             return_json = {"userId": -1, "success": 0}
             if (data):
                 if (data[0][1] == form["password"]):
-                    return_json["userId"] = data[0][1]
+                    return_json["userId"] = int(data[0][1])
                     return_json["success"] = 1
             return jsonify(return_json)
         except:
@@ -63,9 +63,9 @@ def register():
             connecter.execute(sql, param)
             sql = "SELECT userId FROM User WHERE name =%s"
             data = connecter.execute(sql, form["name"])
-            return_json = {"user_id": "", "added": 0}
+            return_json = {"user_id": None, "added": 0}
             if data:
-                return_json["user_id"] = data[0][0]
+                return_json["user_id"] = int(data[0][0])
                 return_json["added"] = 1
             return jsonify(return_json)
         except:
