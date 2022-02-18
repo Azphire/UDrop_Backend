@@ -22,7 +22,7 @@ def login():
             return_json = {"userId": -1, "success": 0}
             if (data):
                 if (data[0][1] == form["password"]):
-                    return_json["userId"] = int(data[0][1])
+                    return_json["userId"] = int(data[0][0])
                     return_json["success"] = 1
             return jsonify(return_json)
         except:
