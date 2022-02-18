@@ -1,6 +1,6 @@
 from flask import Flask, request, Response, jsonify
-from connection import connecter
-from utils import data_parser
+from connection import mysqlConnector
+from utils import dataParser
 
 app = Flask(__name__)
 
@@ -15,10 +15,10 @@ def hello_world():
 @app.route('/user/login', methods=["POST"])
 def login():
     if request.method == "POST":
-        form = request.form.to_dict()
+        form = request.get_json()
         try:
             sql = "SELECT userId, password FROM User WHERE name=%s"
-            data = connecter.execute(sql, form["name"])
+            data = mysqlConnector.execute(sql, form["name"])
             return_json = {"userId": -1, "success": 0}
             if (data):
                 if (data[0][1] == form["password"]):
@@ -39,7 +39,7 @@ def get_name():
         args = request.args.to_dict()
         try:
             sql = "SELECT userId FROM User WHERE name =%s"
-            data = connecter.execute(sql, args["name"])
+            data = mysqlConnector.execute(sql, args["name"])
             if len(data) > 0:
                 return "Exist"
             else:
@@ -56,13 +56,13 @@ def get_name():
 @app.route('/user/register', methods=["POST"])
 def register():
     if request.method == "POST":
-        form = request.form.to_dict()
+        form = request.get_json()
         try:
             sql = "INSERT INTO User (name, password) VALUES (%s,%s)"
             param = (form["name"], form["password"])
-            connecter.execute(sql, param)
+            mysqlConnector.execute(sql, param)
             sql = "SELECT userId FROM User WHERE name =%s"
-            data = connecter.execute(sql, form["name"])
+            data = mysqlConnector.execute(sql, form["name"])
             return_json = {"user_id": None, "added": 0}
             if data:
                 return_json["user_id"] = int(data[0][0])
@@ -86,9 +86,9 @@ def basicInfo():
         args = request.args.to_dict()
         try:
             sql = "SELECT * FROM User WHERE userId=" + args["user_id"]
-            data = connecter.execute(sql)[0]
+            data = mysqlConnector.execute(sql)[0]
             if data:
-                info = data_parser.user(data)
+                info = dataParser.user(data)
                 return_json = {
                     "user_name": info.name,
                     "user_motto": info.motto,
@@ -99,11 +99,11 @@ def basicInfo():
             return "Failed"
 
     if request.method == "POST":
-        form = request.form.to_dict()
+        form = request.get_json()
         try:
             sql = "UPDATE User SET name=%s, motto=%s WHERE userId =" + str(form["user_id"])
             param = (form["name"], form["user_motto"])
-            connecter.execute(sql, param)
+            mysqlConnector.execute(sql, param)
             return "Success"
         except:
             return "Failed"
