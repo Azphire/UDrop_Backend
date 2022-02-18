@@ -85,7 +85,7 @@ def basicInfo():
     if request.method == "GET":
         args = request.args.to_dict()
         try:
-            sql = "SELECT * FROM User WHERE userId=" + args["user_id"]
+            sql = "SELECT * FROM User WHERE userId=" + str(args["user_id"])
             data = mysqlConnector.execute(sql)[0]
             if data:
                 info = dataParser.user(data)
