@@ -129,5 +129,10 @@ def schedule():
         except:
             return "Failed"
 
+# 3.1 get_text_detail (TODO)
+# - param: (title: String)
+# - return: (title: String, writer: String, writer_info: String, content: String)
+
+
 if __name__ == '__main__':
     app.run()
