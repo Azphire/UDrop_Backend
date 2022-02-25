@@ -1,5 +1,5 @@
-from data import *
-from functionList import Function
+from data.remoteData import *
+from utils.functionList import Function
 
 
 class FunctionMatch:
@@ -40,12 +40,11 @@ class FunctionMatch:
 
     def match(self):
         self.detail_match()
-        self.function_match()
+        return self.function_match()
 
     def function_match(self):
         self.function_words_match()
-        self.propose_compose()
-        pass
+        return self.propose_compose()
 
     # 指定篇目或作者名词匹配
     def detail_match(self):
@@ -61,13 +60,19 @@ class FunctionMatch:
     def propose_compose(self):
         # 问答
         if self.functionWords["question"] == 1:
-            self.function = Function.question
-            return True
+            reply = {
+                "function": Function.question.value,
+            }
+            return True, reply, ""
 
         # 作者
         if "author" in self.detailWords.keys():
-            self.function = Function.authorRecite
-            return True
+            reply = {
+                "function": Function.authorRecite.value,
+                "author": self.detailWords["author"]
+            }
+
+            return True, reply, ""
 
         # 处理random
         if self.functionWords["random"] == 1:
@@ -80,13 +85,73 @@ class FunctionMatch:
         has_title = False
         passage_or_poem = False
         sentence_or_whole = False
-        if "poem" in self.detailWords.keys() or "passage" in self.detailWords.keys() or self.functionWords["random"] == 1:
+        if "poem" in self.detailWords.keys() or "passage" in self.detailWords.keys():
             has_title = True
+        if self.functionWords["sentence"] == 1 or self.functionWords["full"] == 1:
+            sentence_or_whole = True
+        if self.functionWords["passage"] == 1 or self.functionWords["poem"] == 1:
+            passage_or_poem = True
 
         # 填充齐全，功能确定
+        if has_title and sentence_or_whole:
+            if "poem" in self.detailWords.keys():
+                title = self.detailWords["poem"]
+                if self.functionWords["sentence"] == 1:
+                    func = Function.poemSentenceRecite
+                else:
+                    func = Function.poemFullRecite
+            else:
+                title = self.detailWords["passage"]
+                if self.functionWords["sentence"] == 1:
+                    func = Function.passageSentenceRecite
+                else:
+                    func = Function.passageFullRecite
+            reply = {
+                "function": func.value,
+                "title": title
+            }
+            return True, reply, ""
+
+        # random only support for sentence
+        if self.functionWords["random"] == 1:
+            if passage_or_poem:
+                if self.functionWords["passage"] == 1:
+                    reply = {
+                        "function": Function.passageSentenceRecite.value,
+                        "title": "random"
+                    }
+                    return True, reply, ""
+                else:
+                    reply = {
+                        "function": Function.poemSentenceRecite.value,
+                        "title": "random"
+                    }
+                    return True, reply, ""
+            else:
+                reply = {
+                    "function": Function.choosing.value,
+                    "detail_words": self.detailWords,
+                    "function_words": self.functionWords
+                }
+                return False, reply, "请问您要背古诗还是课文呢？"
 
         # 填充不齐全，分别组成询问缺失信息的询问
-        pass
+        response = ""
+        if not has_title:
+            if self.functionWords["passage"] == 1:
+                response += "要背哪篇课文呢，或者选择随机。"
+            elif self.functionWords["poem"] == 1:
+                response += "要背哪首诗呢，你也可以指定作者，或者选择随机。"
+            else:
+                response += "要背什么呢，你可以指定课文、古诗，或者选择随机。"
+        if not sentence_or_whole:
+            response += "全文背诵还是逐句背诵呢？"
+        reply = {
+            "function": Function.choosing.value,
+            "detail_words": self.detailWords,
+            "function_words": self.functionWords
+        }
+        return False, reply, response
 
     def poems_match(self):
         poems = get_poems()

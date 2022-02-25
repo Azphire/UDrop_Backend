@@ -1,6 +1,6 @@
-from flask import Flask, request, Response, jsonify
+from flask import Flask, request, jsonify
 from connection import mysqlConnector
-from utils import dataParser
+from data import dataParser
 
 app = Flask(__name__)
 

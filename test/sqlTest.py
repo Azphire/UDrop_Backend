@@ -1,5 +1,5 @@
 import unittest
-import connecter
+import connection.mysqlConnector
 
 
 class MyTestCase(unittest.TestCase):
@@ -7,7 +7,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(True, False)
 
     def test_sql(self):
-        data = connecter.execute("SELECT * FROM User")
+        data = connection.mysqlConnector.execute("SELECT * FROM User")
         print(data)
 
 

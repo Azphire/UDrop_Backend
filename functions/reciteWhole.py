@@ -2,9 +2,11 @@ import random
 import re
 import difflib
 from typing import Tuple
+from data.remoteData import get_poem_by_author, get_poem_random, get_passage_random, get_passage_by_id, get_passage_by_title
 
 # BIAODIAN='，|。|？|！|、|,|\.|?|!'
 BIAODIAN='，|。|,|\.|？|\?|！|\!'
+
 
 def getErrMsg(text1, text2):
     m={'-':[],'+':[],'?':[]}
@@ -28,11 +30,26 @@ def getErrMsg(text1, text2):
     return m
 
 
-def recite_whole(passage: str, ans: str) -> Tuple[dict, str]:
-    ans=[s for s in re.split(BIAODIAN, ans) if s.strip()!='']
-    sentences = [s for s in re.split(BIAODIAN, passage) if s.strip()!='']
-    res=getErrMsg(sentences,ans)
-    reply=''
+def start_reciting(title: str, author: str) -> Tuple[int, str]:
+    reply = "好的，请开始背诵"
+    if title != "":
+        passage = get_passage_by_title(title)
+        passage_id = passage["id"]
+        reply += passage["title"]
+        return passage_id, reply
+    if author != "":
+        passage = get_poem_by_author(author)
+        passage_id = passage["id"]
+        reply += passage["title"]
+        return passage_id, reply
+
+
+def recite_whole(passage_id: int, ans: str) -> Tuple[dict, str]:
+    passage = get_passage_by_id(passage_id)
+    ans = [s for s in re.split(BIAODIAN, ans) if s.strip() != '']
+    sentences = [s for s in re.split(BIAODIAN, passage["content"]) if s.strip() != '']
+    res = getErrMsg(sentences,ans)
+    reply = ''
     if len(res['-'])==0 and len(res['+'])==0 and len(res['?'])==0:
         reply = reply + "恭喜你，全文背诵正确！"
         return res, reply
