@@ -136,6 +136,7 @@ class FunctionMatch:
                 return False, reply, "请问您要背古诗还是课文呢？"
 
         # 填充不齐全，分别组成询问缺失信息的询问
+        # TODO: Add: none of three was filled
         response = ""
         if not has_title:
             if self.functionWords["passage"] == 1:

@@ -2,7 +2,7 @@ import random
 import re
 import difflib
 from typing import Tuple
-from data.remoteData import get_poem_by_author, get_poem_random, get_passage_random, get_passage_by_id, get_passage_by_title
+from data.remoteData import get_poem_by_author, get_passage_by_id, get_passage_by_title
 
 # BIAODIAN='，|。|？|！|、|,|\.|?|!'
 BIAODIAN='，|。|,|\.|？|\?|！|\!'
@@ -30,7 +30,7 @@ def getErrMsg(text1, text2):
     return m
 
 
-def start_reciting(title: str, author: str) -> Tuple[int, str]:
+def start_full_reciting(title: str, author: str) -> Tuple[int, str]:
     reply = "好的，请开始背诵"
     if title != "":
         passage = get_passage_by_title(title)

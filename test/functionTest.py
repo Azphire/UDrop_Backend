@@ -64,6 +64,24 @@ def test_main_function_2():
     print(get_user_data(9))
 
 
+def test_main_function_3():
+    print(reply(9, "我要背诗"))
+    print(get_user_data(9))
+    print(reply(9, "登鹳雀楼"))
+    print(get_user_data(9))
+    print(reply(9, "逐句"))
+    print(get_user_data(9))
+    print(reply(9, "白日依山尽。"))
+    print(get_user_data(9))
+    print(reply(9, "黄河入海流。"))
+    print(get_user_data(9))
+    print(reply(9, "欲穷千"))
+    print(get_user_data(9))
+    print(reply(9, "欲穷千里目。"))
+    print(get_user_data(9))
+    print(reply(9, "更上一层楼。"))
+    print(get_user_data(9))
+
 if __name__ == "__main__":
     # test_recite_whole()
     # test_recite_by_sentence()
