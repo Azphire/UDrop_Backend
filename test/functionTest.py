@@ -3,7 +3,7 @@ from functions.reciteBySentence import recite_by_sentence
 from functions.answerQuestion import answer_question
 from functions.playGame import play_game
 from mainFunction import reply
-from data.memoryData import set_user_data, get_user_data
+from data.memoryData import set_user_data, get_user_data, remove_user_data
 from utils.functionList import Function
 import unittest
 
@@ -88,6 +88,10 @@ class MyTestCase(unittest.TestCase):
             request = input("input request: ")
             print(reply(int(user_id), request))
 
+    def test_author(self):
+        user_id = 1
+        remove_user_data(user_id)
+        reply(1, "李白的诗")
 
 if __name__ == '__main__':
     unittest.main()

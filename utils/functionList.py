@@ -10,3 +10,4 @@ class Function(Enum):
     poemSentenceRecite = 4
     authorRecite = 5
     question = 6
+    game = 7

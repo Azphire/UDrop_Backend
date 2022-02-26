@@ -69,5 +69,18 @@ class CRUDTest(unittest.TestCase):
     def test_get_passage(self):
         print(get_passage(5))
 
+    def test_get_a_game(self):
+        game_id = get_a_random_game_id()
+        print(game_id)
+        print(get_game(game_id))
+
+    def test_question(self):
+        question = get_a_random_question()
+        print(question)
+        print(get_answer(question["question_id"]))
+
+    def test_check(self):
+        print(check_collection(3, "静夜思"))
+
 if __name__ == '__main__':
     unittest.main()

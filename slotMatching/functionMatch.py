@@ -14,7 +14,9 @@ class FunctionMatch:
                 "full": 0,
                 "sentence": 0,
                 "random": 0,
-                "question": 0
+                "question": 0,
+                "recite": 0,
+                "game": 0
             }
         else:
             self.functionWords = function_words
@@ -24,7 +26,9 @@ class FunctionMatch:
             "full": ["全文", "全部"],
             "sentence": ["逐句", "一句", "跟背"],
             "random": ["随机", "随便", "都行", "任意"],
-            "question": ["问答", "提问", "问题"]
+            "question": ["问答", "提问", "问题"],
+            "recite": ["背"],
+            "game": ["游戏", "娱乐", "玩"]
         }
         self.compose = {
             Function.passageFullRecite: {"propose": False, "title": ""},
@@ -32,7 +36,7 @@ class FunctionMatch:
             Function.poemFullRecite: {"propose": False, "title": ""},
             Function.poemSentenceRecite: {"propose": False, "title": ""},
             Function.authorRecite: {"propose": False, "name": ""},
-            Function.question: {"propose": False}
+            Function.question: {"propose": False},
         }
 
         if detail_words != {}:
@@ -62,6 +66,13 @@ class FunctionMatch:
         if self.functionWords["question"] == 1:
             reply = {
                 "function": Function.question.value,
+            }
+            return True, reply, ""
+
+        # 游戏
+        if self.functionWords["game"] == 1:
+            reply = {
+                "function": Function.game.value,
             }
             return True, reply, ""
 
@@ -136,7 +147,14 @@ class FunctionMatch:
                 return False, reply, "请问您要背古诗还是课文呢？"
 
         # 填充不齐全，分别组成询问缺失信息的询问
-        # TODO: Add: none of three was filled
+        reply = {
+            "function": Function.choosing.value,
+            "detail_words": self.detailWords,
+            "function_words": self.functionWords
+        }
+        if not has_title and not sentence_or_whole and not passage_or_poem and self.functionWords["recite"] == 0:
+            return False, reply, "你可以选择背书，题目问答，或者游戏。"
+
         response = ""
         if not has_title:
             if self.functionWords["passage"] == 1:
@@ -147,11 +165,6 @@ class FunctionMatch:
                 response += "要背什么呢，你可以指定课文、古诗，或者选择随机。"
         if not sentence_or_whole:
             response += "全文背诵还是逐句背诵呢？"
-        reply = {
-            "function": Function.choosing.value,
-            "detail_words": self.detailWords,
-            "function_words": self.functionWords
-        }
         return False, reply, response
 
     def poems_match(self):

@@ -2,6 +2,7 @@ from connection import mysqlConnector
 from data.dataParser import *
 import json
 import datetime
+from typing import Tuple
 
 
 def get_password_by_name(name: str):
@@ -32,6 +33,18 @@ def get_collection(user_id: int) -> list:
         return collection_list
     else:
         return []
+
+
+def check_collection(user_id: int, title: str) -> bool:
+    sql = "SELECT collection FROM Collection WHERE userId=%s"
+    data = mysqlConnector.execute(sql, user_id)
+    if data:
+        collections = json.loads(str(data[0][0]))
+        passage_id = get_passage_detail(title).passageId
+        if str(passage_id) in collections.keys():
+            return True
+        else:
+            return False
 
 
 def add_collection(user_id: int, title: str):
@@ -187,3 +200,33 @@ def get_a_random_passage() -> dict:
     if data:
         passage = Passage(data[0]).to_dict()
         return passage
+
+def get_a_random_game_id() -> int:
+    sql = "SELECT gameId FROM Game ORDER BY RAND() LIMIT 1"
+    data = mysqlConnector.execute(sql)
+    if data:
+        game_id = int(data[0][0])
+        return game_id
+
+def get_game(game_id: int) -> dict:
+    sql = "SELECT game FROM Game WHERE gameId=" + str(game_id)
+    data = mysqlConnector.execute(sql)
+    if data:
+        game = json.loads(data[0][0])
+        return game
+
+def get_a_random_question() -> dict:
+    sql = "SELECT * FROM CHNQuestion ORDER BY RAND() LIMIT 1"
+    data = mysqlConnector.execute(sql)
+    if data:
+        question_id = int(data[0][0])
+        question = data[0][1]
+        return {"question_id": question_id, "question": question}
+
+def get_answer(question_id: int) -> str:
+    sql = "SELECT answer FROM CHNQuestion WHERE CHNQuestionId=" + str(question_id)
+    data = mysqlConnector.execute(sql)
+    if data:
+        answer = data[0][0]
+        return answer
+

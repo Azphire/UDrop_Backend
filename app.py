@@ -235,6 +235,26 @@ def collection():
             return "Failed"
 
 
+#### 4.4 check_single_collection
+# - GET
+# - param: (user_id: Int, title: String)
+# - return:
+#   - "Failed", "Yes", "No"
+@app.route('/user/check_collection', methods=["GET"])
+def check_collection():
+    if request.method == "GET":
+        args = request.args.to_dict()
+        try:
+            user_id = int(args["user_id"])
+            title = args["title"]
+            if crud.check_collection(user_id, title):
+                return "Yes"
+            else:
+                return "No"
+        except:
+            return "Failed"
+
+
 #### 3.2 search_text
 # - param: (key: String)
 # - return: (result_list: JSONArray) 诗名或作者与关键词匹配

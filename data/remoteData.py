@@ -2,7 +2,8 @@ import json
 import random
 
 from data.crud import get_all_author_names, get_all_passage_titles, get_all_poem_titles, \
-    get_passage_detail, get_passage, get_a_random_passage, get_a_random_poem, get_passages_by_author
+    get_passage_detail, get_passage, get_a_random_passage, get_a_random_poem, get_passages_by_author, \
+    get_game, get_a_random_game_id, get_a_random_question, get_answer
 
 
 passage = {
@@ -68,22 +69,17 @@ def get_question_random() -> dict:
     return question
 
 
-def get_game_by_id() -> dict:
-    game = {
-        "title": "游戏名",
-        "endings": [3, 4],
-        0: {"content": "叙述0", "choices": {"选项A": 1, "选项B": 2}},
-        1: {"content": "叙述1", "choices": {"选项A": 2, "选项B": 3}},
-        2: {"content": "叙述2", "choices": {"选项A": 3, "选项B": 4}},
-        3: {"content": "结局3"},
-        4: {"content": "结局4"}
-    }
-    return game
+def get_game_by_id(game_id: int) -> dict:
+    return get_game(game_id)
 
 
-def get_question_by_id() -> dict:
-    question = {
-        "content": "9-4=",
-        "answer": "6"
-    }
-    return question
+def get_random_game() -> int:
+    return get_a_random_game_id()
+
+
+def get_question_random() -> dict:
+    return get_a_random_question()
+
+
+def get_answer_by_id(question_id: int) -> str:
+    return get_answer(question_id)
