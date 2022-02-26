@@ -162,3 +162,11 @@ def get_passages_by_author(name: str):
             passages.append(Passage(t).to_dict())
     return passages
 
+def random_texts(number: int) -> list:
+    sql = "SELECT * FROM CHNPassage natural join CHNAuthor ORDER BY RAND() LIMIT " + str(number)
+    data = mysqlConnector.execute(sql)
+    passages = []
+    if data:
+        for t in data:
+            passages.append(Passage(t).to_dict())
+    return passages

@@ -48,7 +48,7 @@ class Passage:
 
     def to_dict(self):
         return {
-            "passage_id": self.passageId,
+            "id": self.passageId,
             "title": self.title,
             "author": self.author,
             # "author_info": self.introduction,

@@ -59,5 +59,8 @@ class CRUDTest(unittest.TestCase):
     def test_get_passages_by_author(self):
         print(get_passages_by_author("王维"))
 
+    def test_random_texts(self):
+        print(random_texts(3))
+
 if __name__ == '__main__':
     unittest.main()

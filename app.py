@@ -243,10 +243,25 @@ def key_search():
         args = request.args.to_dict()
         try:
             passages = textMatch.match(args["key"])
-            print(passages)
             return jsonify({"result_list": passages})
         except:
             return "Failed"
+
+
+#### 3.3 random_poems
+# - GET
+# - param: (number: Int) 随机返回的数量
+# - return: (result_list: JSONArray)
+@app.route('/poems/random', methods=["GET"])
+def random_poems():
+    if request.method == "GET":
+        args = request.args.to_dict()
+        try:
+            passages = crud.random_texts(int(args["number"]))
+            return jsonify({"result_list": passages})
+        except:
+            return "Failed"
+
 
 if __name__ == '__main__':
     app.run()

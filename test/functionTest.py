@@ -82,5 +82,12 @@ class MyTestCase(unittest.TestCase):
         print(reply(9, "更上一层楼。"))
         print(get_user_data(9))
 
+    def test_main_loop(self):
+        user_id = input("input user_id: ")
+        while(True):
+            request = input("input request: ")
+            print(reply(int(user_id), request))
+
+
 if __name__ == '__main__':
     unittest.main()
