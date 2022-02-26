@@ -1,18 +1,6 @@
 import json
-from connection.mysqlConnector import execute
+from data.crud import get_all_author_names, get_all_passage_titles, get_all_poem_titles, get_passage_detail
 
-
-passages = [
-    "岳阳楼记", "桃花源记", "出师表"
-]
-
-poems = [
-    "登鹳雀楼", "登高", "静夜思"
-]
-
-authors = [
-    "李白", "杜甫", "白居易"
-]
 
 passage = {
         "id": 1,
@@ -23,15 +11,15 @@ passage = {
 
 
 def get_passages() -> list:
-    return passages
+    return get_all_passage_titles()
 
 
 def get_poems() -> list:
-    return poems
+    return get_all_poem_titles()
 
 
 def get_authors() -> list:
-    return authors
+    return get_all_author_names()
 
 
 def get_passage_by_id(passage_id: int) -> dict:
@@ -52,7 +40,8 @@ def get_poem_by_author(author: str) -> dict:
 
 
 def get_passage_by_title(title: str) -> dict:
-    return passage
+    passage = get_passage_detail(title)
+    return passage.to_dict()
 
 
 def get_game_random() -> dict:

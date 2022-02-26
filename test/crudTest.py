@@ -52,5 +52,12 @@ class CRUDTest(unittest.TestCase):
     def test_get_new_list(self):
         print(get_new_list(2))
 
+    def test_get_all_titles(self):
+        print(get_all_passage_titles())
+        print(get_all_poem_titles())
+
+    def test_get_passages_by_author(self):
+        print(get_passages_by_author("王维"))
+
 if __name__ == '__main__':
     unittest.main()

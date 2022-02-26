@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from connection import mysqlConnector
 from data import dataParser
 from data import crud
+from slotMatching import textMatch
 
 app = Flask(__name__)
 
@@ -232,6 +233,20 @@ def collection():
         except:
             return "Failed"
 
+
+#### 3.2 search_text
+# - param: (key: String)
+# - return: (result_list: JSONArray) 诗名或作者与关键词匹配
+@app.route('/poems/search', methods=["GET"])
+def key_search():
+    if request.method == "GET":
+        args = request.args.to_dict()
+        try:
+            passages = textMatch.match(args["key"])
+            print(passages)
+            return jsonify({"result_list": passages})
+        except:
+            return "Failed"
 
 if __name__ == '__main__':
     app.run()

@@ -118,3 +118,47 @@ def update_new_list(user_id: int, new_list: list):
         param = (user_id, json.dumps(new_list))
         mysqlConnector.execute(sql, param)
         return True
+
+
+def get_all_passage_titles():
+    sql = "SELECT title FROM CHNPassage WHERE category=1"
+    data = mysqlConnector.execute(sql)
+    titles = []
+    if data:
+        for t in data:
+            titles.append(t[0])
+    return titles
+
+
+def get_all_poem_titles():
+    sql = "SELECT title FROM CHNPassage WHERE category=0"
+    data = mysqlConnector.execute(sql)
+    titles = []
+    if data:
+        for t in data:
+            titles.append(t[0])
+    return titles
+
+
+def get_all_author_names():
+    sql = "SELECT name FROM CHNAuthor"
+    data = mysqlConnector.execute(sql)
+    names = []
+    if data:
+        for t in data:
+            names.append(t[0])
+    return names
+
+
+def get_passage(passage_id: int):
+    pass
+
+def get_passages_by_author(name: str):
+    sql = "SELECT * FROM CHNPassage natural join CHNAuthor WHERE name=%s"
+    data = mysqlConnector.execute(sql, name)
+    passages = []
+    if data:
+        for t in data:
+            passages.append(Passage(t).to_dict())
+    return passages
+
