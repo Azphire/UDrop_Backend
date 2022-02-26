@@ -62,5 +62,12 @@ class CRUDTest(unittest.TestCase):
     def test_random_texts(self):
         print(random_texts(3))
 
+    def test_random(self):
+        print(get_a_random_poem())
+        print(get_a_random_passage())
+
+    def test_get_passage(self):
+        print(get_passage(5))
+
 if __name__ == '__main__':
     unittest.main()

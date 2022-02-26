@@ -151,7 +151,10 @@ def get_all_author_names():
 
 
 def get_passage(passage_id: int):
-    pass
+    sql = "SELECT * FROM CHNPassage natural join CHNAuthor WHERE CHNPassageId= " + str(passage_id)
+    data = mysqlConnector.execute(sql)
+    if data:
+        return Passage(data[0]).to_dict()
 
 def get_passages_by_author(name: str):
     sql = "SELECT * FROM CHNPassage natural join CHNAuthor WHERE name=%s"
@@ -170,3 +173,17 @@ def random_texts(number: int) -> list:
         for t in data:
             passages.append(Passage(t).to_dict())
     return passages
+
+def get_a_random_poem() -> dict:
+    sql = "SELECT * FROM CHNPassage natural join CHNAuthor WHERE category=0 ORDER BY RAND() LIMIT 1"
+    data = mysqlConnector.execute(sql)
+    if data:
+        poem = Passage(data[0]).to_dict()
+        return poem
+
+def get_a_random_passage() -> dict:
+    sql = "SELECT * FROM CHNPassage natural join CHNAuthor WHERE category=1 ORDER BY RAND() LIMIT 1"
+    data = mysqlConnector.execute(sql)
+    if data:
+        passage = Passage(data[0]).to_dict()
+        return passage

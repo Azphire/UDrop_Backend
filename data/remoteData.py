@@ -1,5 +1,8 @@
 import json
-from data.crud import get_all_author_names, get_all_passage_titles, get_all_poem_titles, get_passage_detail
+import random
+
+from data.crud import get_all_author_names, get_all_passage_titles, get_all_poem_titles, \
+    get_passage_detail, get_passage, get_a_random_passage, get_a_random_poem, get_passages_by_author
 
 
 passage = {
@@ -23,20 +26,20 @@ def get_authors() -> list:
 
 
 def get_passage_by_id(passage_id: int) -> dict:
-    print(passage_id)
-    return passage
+    return get_passage(passage_id)
 
 
 def get_passage_random() -> dict:
-    return passage
+    return get_a_random_passage()
 
 
 def get_poem_random() -> dict:
-    return passage
+    return get_a_random_poem()
 
 
 def get_poem_by_author(author: str) -> dict:
-    return passage
+    poems = get_passages_by_author(author)
+    return random.choice(poems)
 
 
 def get_passage_by_title(title: str) -> dict:

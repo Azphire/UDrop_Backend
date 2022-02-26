@@ -3,6 +3,7 @@ from connection import mysqlConnector
 from data import dataParser
 from data import crud
 from slotMatching import textMatch
+from mainFunction import reply
 
 app = Flask(__name__)
 
@@ -262,6 +263,18 @@ def random_poems():
         except:
             return "Failed"
 
+# 语音功能
+@app.route('/reply', methods=["POST"])
+def response():
+    if request.method == "POST":
+        form = request.get_json()
+        try:
+            user_id = int(form["user_id"])
+            text = form["text"]
+            is_finished, response = reply(user_id, text)
+            return jsonify({"is_finished": is_finished, "response": response})
+        except:
+            return "Failed"
 
 if __name__ == '__main__':
     app.run()
