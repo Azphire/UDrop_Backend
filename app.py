@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from connection import mysqlConnector
 from data import dataParser
+from data import crud
 
 app = Flask(__name__)
 
@@ -17,8 +18,7 @@ def login():
     if request.method == "POST":
         form = request.get_json()
         try:
-            sql = "SELECT userId, password FROM User WHERE name=%s"
-            data = mysqlConnector.execute(sql, form["name"])
+            data = crud.get_password_by_name(str(form["name"]))
             return_json = {"userId": -1, "success": 0}
             if (data):
                 if (data[0][1] == form["password"]):
@@ -88,7 +88,7 @@ def basicInfo():
             sql = "SELECT * FROM User WHERE userId=" + str(args["user_id"])
             data = mysqlConnector.execute(sql)[0]
             if data:
-                info = dataParser.user(data)
+                info = dataParser.User(data)
                 return_json = {
                     "user_name": info.name,
                     "user_motto": info.motto,
@@ -129,9 +129,69 @@ def schedule():
         except:
             return "Failed"
 
-# 3.1 get_text_detail (TODO)
+
+# 3.1 get_text_detail
 # - param: (title: String)
 # - return: (title: String, writer: String, writer_info: String, content: String)
+@app.route('/passage/detail', methods=["GET"])
+def passageDetail():
+    if request.method == "GET":
+        args = request.args.to_dict()
+        try:
+            passage = crud.get_passage_detail(args["title"])
+            return_json = {
+                "title": passage.title,
+                "author": passage.author,
+                "author_info": passage.introduction,
+                "content": passage.content
+            }
+            return jsonify(return_json)
+        except:
+            return "Failed"
+
+
+# 4.1 get_collection
+# - param: (user_id: Int)
+# - return: (collection_list: JSONArray)
+# 4.2 remove_collection
+# - param: (user_id: Int, title: String)
+# - return:
+#   - "Failed", "Success"
+# 4.3 add_collection
+# - param: (user_id: Int, title: String)
+# - return:
+#   - "Failed", "Success"
+@app.route('/user/collection', methods=["GET", "POST", "DELETE"])
+def collection():
+    if request.method == "GET":
+        args = request.args.to_dict()
+        try:
+            collection_list = crud.get_collection(int(args["user_id"]))
+            return jsonify({"collection_list": collection_list})
+        except:
+            return "Failed"
+
+    if request.method == "POST":
+        form = request.get_json()
+        try:
+            added = crud.add_collection(int(form["user_id"]), form["title"])
+            if added:
+                return "Added"
+            else:
+                return "No Change"
+        except:
+            return "Failed"
+
+    if request.method == "DELETE":
+        form = request.get_json()
+        try:
+            removed = crud.remove_collection(int(form["user_id"]), form["title"])
+            if removed:
+                return "Removed"
+            else:
+                return "No Change"
+        except:
+            return "Failed"
 
 
 if __name__ == '__main__':

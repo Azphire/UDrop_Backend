@@ -2,7 +2,7 @@
 import datetime
 
 
-class user:
+class User:
     def __init__(self, data):
         self.userId = int(data[0])
 
@@ -34,3 +34,25 @@ class user:
 
         current = datetime.datetime.now()
         self.learnedDays = (current - data[9]).days + 1
+
+
+class Passage:
+    def __init__(self, data):
+        self.passageId = data[1]
+        self.title = data[2]
+        self.author = data[7]
+        self.introduction = data[9]
+        self.dynasty = data[8]
+        self.content = data[5]
+        self.category = data[6]  # 0: poem, 1: passage
+
+    def to_dict(self):
+        return {
+            "passage_id": self.passageId,
+            "title": self.title,
+            "author": self.author,
+            # "author_info": self.introduction,
+            "dynasty": self.dynasty,
+            "content": self.content,
+            "category": self.category
+        }
