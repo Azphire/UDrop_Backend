@@ -70,3 +70,51 @@ def remove_collection(user_id: int, title: str):
             return False
     else:
         return False
+
+
+def get_review_list(user_id: int):
+    sql = "SELECT list FROM reviewList WHERE userId=%s"
+    data = mysqlConnector.execute(sql, user_id)
+    if data:
+        review_list = json.loads(str(data[0][0]))
+        return review_list
+    else:
+        return []
+
+
+def get_new_list(user_id: int):
+    sql = "SELECT list FROM newList WHERE userId=%s"
+    data = mysqlConnector.execute(sql, user_id)
+    if data:
+        new_list = json.loads(str(data[0][0]))
+        return new_list
+    else:
+        return []
+
+
+def update_review_list(user_id: int, review_list: list):
+    sql = "SELECT list FROM reviewList WHERE userId=%s"
+    data = mysqlConnector.execute(sql, user_id)
+    if data:
+        sql = "UPDATE reviewList SET list=%s WHERE userId=%s"
+        mysqlConnector.execute(sql, (json.dumps(review_list), user_id))
+        return True
+    else:
+        sql = "INSERT INTO reviewList (userId, list) VALUES (%s,%s)"
+        param = (user_id, json.dumps(review_list))
+        mysqlConnector.execute(sql, param)
+        return True
+
+
+def update_new_list(user_id: int, new_list: list):
+    sql = "SELECT list FROM newList WHERE userId=%s"
+    data = mysqlConnector.execute(sql, user_id)
+    if data:
+        sql = "UPDATE newList SET list=%s WHERE userId=%s"
+        mysqlConnector.execute(sql, (json.dumps(new_list), user_id))
+        return True
+    else:
+        sql = "INSERT INTO newList (userId, list) VALUES (%s,%s)"
+        param = (user_id, json.dumps(new_list))
+        mysqlConnector.execute(sql, param)
+        return True

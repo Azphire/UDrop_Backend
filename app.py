@@ -120,12 +120,51 @@ def schedule():
         args = request.args.to_dict()
         try:
             userId = args["user_id"]
-            print(userId)
+            new_list = crud.get_new_list(userId)
+            review_list = crud.get_review_list(userId)
             result = {
-                "new_list": [{"title": "静夜思", "done": 1}, {"title": "出师表", "done": 0}, {"title": "蜀道难", "done": 0}],
-                "review_list": [{"title": "离骚", "done": 0}, {"title": "桃花源记", "done": 1}]
+                "new_list": new_list,
+                "review_list": review_list
             }
             return jsonify(result)
+        except:
+            return "Failed"
+
+
+#### 2.2 set_new_schedule
+# - param: (user_id: Int, new_schedule: JSONArray) 这里的JSONArray就是你前面返回的古诗列表格式，不用管它是个什么词
+# - return: (resultCode: Int)
+#   - 0: failure
+#   - 1: success
+@app.route('/study/new_schedule', methods=["POST"])
+def new_list():
+    if request.method == "POST":
+        form = request.get_json()
+        try:
+            success = crud.update_new_list(int(form["user_id"]), form["new_schedule"])
+            if success:
+                return "Success"
+            else:
+                return "Failed"
+        except:
+            return "Failed"
+
+
+#### 2.3 set_review_schedule
+# - param: (user_id: Int, review_schedule: JSONArray)
+# - return: (resultCode: Int)
+#   - 0: failure
+#   - 1: success
+@app.route('/study/review_schedule', methods=["POST"])
+def review_list():
+    if request.method == "POST":
+        form = request.get_json()
+        try:
+            success = crud.update_review_list(int(form["user_id"]), form["review_schedule"])
+            if success:
+                return "Success"
+            else:
+                return "Failed"
         except:
             return "Failed"
 
