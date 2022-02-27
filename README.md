@@ -1,4 +1,42 @@
-# UDrop_Backend
+# UDrop Backend
+
+## MySQL
+
+### 数据导入
+
+dump.sql
+
+### 数据库连接配置
+
+创建`connection/mysqlConfig.json`，内容：
+```
+{
+  "host": "YOUR HOST IP",
+  "user": "YOUR USER NAME",
+  "password": "YOUR PASSWORD",
+  "database":"YOUR DATABASE"
+}
+```
+
+## Redis
+
+需要启动本地Redis，启动参数为默认参数，即6379端口，无密码。
+
+### windows启动
+
+```
+cd D:\Program Files\Redis
+redis-server.exe redis.windows.conf
+```
+
+## Flask
+
+### 启动
+
+```
+uwsgi --http-socket :5001 --wsgi-file app.py --callable app &
+```
+
 ### 接口
 
 #### 1.1 add_new_user
