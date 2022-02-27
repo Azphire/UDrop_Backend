@@ -6,7 +6,7 @@ def match(text: str) -> list:
     passages = []
     all_authors = get_all_author_names()
     for name in all_authors:
-        if name in text:
+        if name in text or text in name:
             passages += get_passages_by_author(name)
     all_titles = get_all_poem_titles() + get_all_passage_titles()
     for title in all_titles:

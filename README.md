@@ -18,6 +18,10 @@ dump.sql
 }
 ```
 
+### 更新本地缓存
+
+诗词词库更新后，运行`data/updateStaticData.py`以更新本地缓存。
+
 ## Redis
 
 需要启动本地Redis，启动参数为默认参数，即6379端口，无密码。

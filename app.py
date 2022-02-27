@@ -1,9 +1,7 @@
 from flask import Flask, request, jsonify
-from connection import mysqlConnector
-from data import dataParser
 from data import crud
 from slotMatching import textMatch
-from mainFunction import reply
+from functions.mainFunction import reply
 
 app = Flask(__name__)
 
@@ -287,4 +285,5 @@ def response():
 
 
 if __name__ == '__main__':
+
     app.run()

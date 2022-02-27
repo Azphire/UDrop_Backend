@@ -2,7 +2,7 @@ from functions.reciteWhole import recite_whole
 from functions.reciteBySentence import recite_by_sentence
 from functions.answerQuestion import answer_question
 from functions.playGame import play_game
-from mainFunction import reply
+from functions.mainFunction import reply
 from data.memoryData import set_user_data, get_user_data, remove_user_data
 from utils.functionList import Function
 import unittest

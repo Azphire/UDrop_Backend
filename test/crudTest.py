@@ -1,3 +1,5 @@
+import os
+
 from data.crud import *
 from data.dataParser import *
 import unittest
@@ -55,6 +57,15 @@ class CRUDTest(unittest.TestCase):
     def test_get_all_titles(self):
         print(get_all_passage_titles())
         print(get_all_poem_titles())
+        print(get_all_author_names())
+
+    def test_os(self):
+        base = os.getcwd()
+        path = os.path.join(base, "static", "poems.txt")
+        with open(path, 'r') as f:
+            data = f.read().split(" ")
+        data.pop(0)
+        print(data)
 
     def test_get_passages_by_author(self):
         print(get_passages_by_author("王维"))

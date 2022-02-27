@@ -1,8 +1,9 @@
+import os
+
 from connection import mysqlConnector
 from data.dataParser import *
 import json
 import datetime
-from typing import Tuple
 
 
 def get_password_by_name(name: str):
@@ -53,9 +54,6 @@ def edit_user_detail(user_id: int, name: str, motto: str) -> bool:
         return True
     except:
         return False
-
-
-
 
 
 def get_passage_detail(title: str) -> Passage:
@@ -181,33 +179,34 @@ def update_new_list(user_id: int, new_list: list):
 
 
 def get_all_passage_titles():
-    sql = "SELECT title FROM CHNPassage WHERE category=1"
-    data = mysqlConnector.execute(sql)
-    titles = []
-    if data:
-        for t in data:
-            titles.append(t[0])
-    return titles
+    base = os.getcwd()
+    path = os.path.join(base, "data", "static", "passages.txt")
+    with open(path, 'r') as f:
+        data = f.read().split(" ")
+    data.pop(0)
+    return data
 
 
 def get_all_poem_titles():
-    sql = "SELECT title FROM CHNPassage WHERE category=0"
-    data = mysqlConnector.execute(sql)
-    titles = []
-    if data:
-        for t in data:
-            titles.append(t[0])
-    return titles
+    base = os.getcwd()
+    path = os.path.join(base, "data", "static", "poems.txt")
+    with open(path, 'r') as f:
+        data = f.read().split(" ")
+    data.pop(0)
+    return data
 
 
 def get_all_author_names():
-    sql = "SELECT name FROM CHNAuthor"
-    data = mysqlConnector.execute(sql)
-    names = []
-    if data:
-        for t in data:
-            names.append(t[0])
-    return names
+    try:
+        base = os.getcwd()
+        path = os.path.join(base, "data", "static", "authors.txt")
+        with open(path, 'r') as f:
+            data = f.read().split(" ")
+        data.pop(0)
+        return data
+    except IOError:
+        print(IOError.errno)
+        print(IOError.filename)
 
 
 def get_passage(passage_id: int):
