@@ -2,9 +2,11 @@ import random
 import re
 from typing import Tuple
 from data.remoteData import get_poem_random, get_passage_random, get_passage_by_id, get_passage_by_title, get_poem_by_author
+from slotMatching import interruptMatch
 
 
 BIAODIAN='，|。|,|\.|？|\?|！|\!'
+interrupt_words = ["不背", "结束", "停"]
 
 
 def start_sentence_reciting(title: str, author: str, category: str) -> Tuple[int, str]:
@@ -48,7 +50,10 @@ def recite_by_sentence(passage_id: int, sentence_num: int, ans: str) -> Tuple[bo
             reply = sentences[sentence_num + 1]
             return False, sentence_num + 1, reply
     
-    # 背诵有误
+    # 背诵有误或者中断
     else:
-        reply = '再试一遍：' + sentences[sentence_num]
-        return False, sentence_num, reply
+        if interruptMatch.match(ans, interrupt_words):
+            return True, -1, "好的，背诵结束。"
+        else:
+            reply = '再试一次：' + sentences[sentence_num]
+            return False, sentence_num, reply

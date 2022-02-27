@@ -1,5 +1,7 @@
 from typing import Tuple
 from data.remoteData import get_game_by_id, get_random_game
+from slotMatching import interruptMatch
+interrupt_words = ["不玩", "结束", "停"]
 
 def start_play_game() -> Tuple[int, int]:
     game_id = get_random_game()
@@ -21,5 +23,8 @@ def play_game(game_id: int, plot: int, request: str) -> Tuple[bool, int, str]:
                 return True, -1, reply + "游戏结束。"
             else:
                 return False, plot_id, reply
-    
-    return False, plot, "对不起，我没有听清，请再说一次"
+
+    if interruptMatch.match(request, interrupt_words):
+        return True, -1, "好的，游戏结束，我们下次再玩。"
+    else:
+        return False, plot, "对不起，我没有听清，请再说一次。"
