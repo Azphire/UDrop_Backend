@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import datetime
+import json
 
 
 class User:
@@ -56,3 +57,49 @@ class Passage:
             "content": self.content,
             "category": self.category
         }
+
+
+class ReviewList:
+    def __init__(self, data=None):
+        self.current = datetime.datetime.today()
+        if data is None:
+            self.today = []
+            self.future = []
+            return
+
+        total = json.loads(data)
+        for i in range(len(total)):
+            total[i]["time"] = datetime.datetime.strptime(total[i]["time"], "%Y-%m-%d")
+        self.today = [item for item in total if (self.current - item["time"]).days == 0]
+        self.future = [item for item in total if (self.current - item["time"]).days < 0]
+
+    def add_review_items(self, title: str) -> list:
+        days = [1, 7, 30]
+        for day in days:
+            already_in_list = False
+            for i in range(len(self.future)):
+                if (self.future[i]["time"] - self.current).days + 1 == day and self.future[i]["title"] == title:
+                    already_in_list = True
+                    break
+            if not already_in_list:
+                self.future.append({
+                    "title": title,
+                    "done": 0,
+                    "time": self.current + datetime.timedelta(days=day)
+                })
+        for i in range(len(self.future)):
+            self.future[i]["time"] = self.future[i]["time"].strftime("%Y-%m-%d")
+        for i in range(len(self.today)):
+            self.today[i]["time"] = self.today[i]["time"].strftime("%Y-%m-%d")
+        return self.today + self.future
+
+    def update_today(self, data: list) -> list:
+        new_today = data
+        for i in range(len(self.future)):
+            self.future[i]["time"] = self.future[i]["time"].strftime("%Y-%m-%d")
+        return new_today + self.future
+
+    def get_today(self) -> list:
+        for i in range(len(self.today)):
+            self.today[i]["time"] = self.today[i]["time"].strftime("%Y-%m-%d")
+        return self.today

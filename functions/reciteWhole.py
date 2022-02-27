@@ -44,7 +44,7 @@ def start_full_reciting(title: str, author: str) -> Tuple[int, str]:
         return passage_id, reply
 
 
-def recite_whole(passage_id: int, ans: str) -> Tuple[dict, str]:
+def recite_whole(passage_id: int, ans: str) -> Tuple[bool, dict, str]:
     passage = get_passage_by_id(passage_id)
     ans = [s for s in re.split(BIAODIAN, ans) if s.strip() != '']
     sentences = [s for s in re.split(BIAODIAN, passage["content"]) if s.strip() != '']
@@ -52,7 +52,7 @@ def recite_whole(passage_id: int, ans: str) -> Tuple[dict, str]:
     reply = ''
     if len(res['-'])==0 and len(res['+'])==0 and len(res['?'])==0:
         reply = reply + "恭喜你，全文背诵正确！"
-        return res, reply
+        return True, res, reply
     if len(res['?'])>0:
         reply = reply + "背错的部分有："
         for s in res['?']:
@@ -62,4 +62,5 @@ def recite_whole(passage_id: int, ans: str) -> Tuple[dict, str]:
         reply = reply + "漏背的部分有："+",".join(res['-']) + "。"
     if len(res['+'])>0:
         reply = reply + "多余的部分有："+",".join(res['+']) + "。"
-    return res, reply
+    reply += "复习计划已更新。"
+    return False, res, reply

@@ -6,6 +6,7 @@ from functions.reciteWhole import start_full_reciting, recite_whole
 from functions.reciteBySentence import start_sentence_reciting, recite_by_sentence
 from functions.playGame import start_play_game, play_game
 from functions.answerQuestion import start_question, answer_question
+from data.remoteData import add_review
 
 def reply(user_id: int, request: str) -> Tuple[bool, str]:
     # get redis data
@@ -36,7 +37,9 @@ def reply(user_id: int, request: str) -> Tuple[bool, str]:
             set_user_data(user_id, user_data)
             return False, response
         else:
-            res, response = recite_whole(user_data["passage_id"], request)
+            correct, res, response = recite_whole(user_data["passage_id"], request)
+            if not correct:
+                add_review(user_id, user_data["title"])
             remove_user_data(user_id)
             return True, response
 

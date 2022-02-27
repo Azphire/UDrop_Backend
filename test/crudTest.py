@@ -67,6 +67,16 @@ class CRUDTest(unittest.TestCase):
         data.pop(0)
         print(data)
 
+    def test_time(self):
+        t = datetime.datetime.strptime("2022-02-28", "%Y-%m-%d")
+        print(t)
+        current = datetime.datetime.today()
+        print(current)
+        print((current - t).days)
+
+    def test_list(self):
+        add_review_item(4, "出塞")
+
     def test_get_passages_by_author(self):
         print(get_passages_by_author("王维"))
 

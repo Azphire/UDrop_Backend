@@ -2,7 +2,7 @@ import json
 import random
 from data.crud import get_all_author_names, get_all_passage_titles, get_all_poem_titles, \
     get_passage_detail, get_passage, get_a_random_passage, get_a_random_poem, get_passages_by_author, \
-    get_game, get_a_random_game_id, get_a_random_question, get_answer
+    get_game, get_a_random_game_id, get_a_random_question, get_answer, add_review_item
 
 
 def get_passages() -> list:
@@ -53,3 +53,7 @@ def get_question_random() -> dict:
 
 def get_answer_by_id(question_id: int) -> str:
     return get_answer(question_id)
+
+
+def add_review(user_id: int, title: str):
+    add_review_item(user_id, title)

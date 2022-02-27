@@ -130,12 +130,13 @@ def remove_collection(user_id: int, title: str):
         return False
 
 
+# 今日复习计划
 def get_review_list(user_id: int):
     sql = "SELECT list FROM reviewList WHERE userId=%s"
     data = mysqlConnector.execute(sql, user_id)
     if data:
-        review_list = json.loads(str(data[0][0]))
-        return review_list
+        review_list = ReviewList(data[0][0])
+        return review_list.get_today()
     else:
         return []
 
@@ -150,14 +151,33 @@ def get_new_list(user_id: int):
         return []
 
 
-def update_review_list(user_id: int, review_list: list):
+def add_review_item(user_id: int, passage_title: str):
     sql = "SELECT list FROM reviewList WHERE userId=%s"
     data = mysqlConnector.execute(sql, user_id)
     if data:
+        review_list = ReviewList(data[0][0])
+        new_list = review_list.add_review_items(passage_title)
+        sql = "UPDATE reviewList SET list=%s WHERE userId=%s"
+        mysqlConnector.execute(sql, (json.dumps(new_list), user_id))
+        return True
+    else:
+        review_list = ReviewList().add_review_items(passage_title)
+        sql = "INSERT INTO reviewList (userId, list) VALUES (%s,%s)"
+        param = (user_id, json.dumps(review_list))
+        mysqlConnector.execute(sql, param)
+        return True
+
+
+def update_review_list(user_id: int, new_list: list):
+    sql = "SELECT list FROM reviewList WHERE userId=%s"
+    data = mysqlConnector.execute(sql, user_id)
+    if data:
+        review_list = ReviewList(data[0][0]).update_today(new_list)
         sql = "UPDATE reviewList SET list=%s WHERE userId=%s"
         mysqlConnector.execute(sql, (json.dumps(review_list), user_id))
         return True
     else:
+        review_list = ReviewList().update_today(new_list)
         sql = "INSERT INTO reviewList (userId, list) VALUES (%s,%s)"
         param = (user_id, json.dumps(review_list))
         mysqlConnector.execute(sql, param)
@@ -178,35 +198,37 @@ def update_new_list(user_id: int, new_list: list):
         return True
 
 
+def get_static_path():
+    current_path = os.getcwd()
+    base, current_dir = os.path.split(current_path)
+    if current_dir == 'UDrop_Backend':
+        return os.path.join(current_path, "static")
+    else:
+        return os.path.join(base, "static")
+
+
 def get_all_passage_titles():
-    base = os.getcwd()
-    path = os.path.join(base, "data", "static", "passages.txt")
-    with open(path, 'r') as f:
+    file = os.path.join(get_static_path(), "passages.txt")
+    with open(file, 'r') as f:
         data = f.read().split(" ")
     data.pop(0)
     return data
 
 
 def get_all_poem_titles():
-    base = os.getcwd()
-    path = os.path.join(base, "data", "static", "poems.txt")
-    with open(path, 'r') as f:
+    file = os.path.join(get_static_path(), "poems.txt")
+    with open(file, 'r') as f:
         data = f.read().split(" ")
     data.pop(0)
     return data
 
 
 def get_all_author_names():
-    try:
-        base = os.getcwd()
-        path = os.path.join(base, "data", "static", "authors.txt")
-        with open(path, 'r') as f:
-            data = f.read().split(" ")
-        data.pop(0)
-        return data
-    except IOError:
-        print(IOError.errno)
-        print(IOError.filename)
+    file = os.path.join(get_static_path(), "authors.txt")
+    with open(file, 'r') as f:
+        data = f.read().split(" ")
+    data.pop(0)
+    return data
 
 
 def get_passage(passage_id: int):

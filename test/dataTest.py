@@ -10,7 +10,7 @@ class MyTestCase(unittest.TestCase):
         print(get_poem_by_author("李白"))
 
     def test_static(self):
-        with open('../data/static/authors.txt', 'r') as f:
+        with open('../static/authors.txt', 'r') as f:
             data = f.read().split(" ")
             data.pop(0)
             print(data)

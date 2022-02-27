@@ -9,7 +9,7 @@ def updateStatic():
     if data:
         for t in data:
             names += " " + t[0]
-    with open('./static/authors.txt', 'w') as f:
+    with open('../static/authors.txt', 'w') as f:
         f.write(names)
 
 
@@ -19,7 +19,7 @@ def updateStatic():
     if data:
         for t in data:
             titles += " " + t[0]
-    with open('./static/poems.txt', 'w') as f:
+    with open('../static/poems.txt', 'w') as f:
         f.write(titles)
 
 
@@ -29,7 +29,7 @@ def updateStatic():
     if data:
         for t in data:
             titles += " " + t[0]
-    with open('./static/passages.txt', 'w') as f:
+    with open('../static/passages.txt', 'w') as f:
         f.write(titles)
 
     print("Static Updated")
