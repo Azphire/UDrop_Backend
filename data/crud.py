@@ -11,6 +11,53 @@ def get_password_by_name(name: str):
     return data
 
 
+def check_user_name(name: str) -> bool:
+    sql = "SELECT userId FROM User WHERE name =%s"
+    data = mysqlConnector.execute(sql, name)
+    if len(data) > 0:
+        return True
+    else:
+        return False
+
+
+def add_user(name: str, password: str) -> dict:
+    sql = "INSERT INTO User (name, password) VALUES (%s,%s)"
+    param = (name, password)
+    mysqlConnector.execute(sql, param)
+    sql = "SELECT userId FROM User WHERE name =%s"
+    data = mysqlConnector.execute(sql, name)
+    return_dict = {"user_id": None, "added": 0}
+    if data:
+        return_dict["user_id"] = int(data[0][0])
+        return_dict["added"] = 1
+
+
+def get_user_detail(user_id: int) -> dict:
+    sql = "SELECT * FROM User WHERE userId=" + str(user_id)
+    data = mysqlConnector.execute(sql)[0]
+    if data:
+        info = User(data)
+        return_json = {
+            "user_name": info.name,
+            "user_motto": info.motto,
+            "learned_days": info.learnedDays
+        }
+        return return_json
+
+
+def edit_user_detail(user_id: int, name: str, motto: str) -> bool:
+    sql = "UPDATE User SET name=%s, motto=%s WHERE userId =" + str(user_id)
+    param = (name, motto)
+    try:
+        mysqlConnector.execute(sql, param)
+        return True
+    except:
+        return False
+
+
+
+
+
 def get_passage_detail(title: str) -> Passage:
     sql = "SELECT * FROM CHNPassage natural join CHNAuthor WHERE title=%s"
     data = mysqlConnector.execute(sql, title)

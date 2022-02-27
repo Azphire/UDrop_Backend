@@ -40,9 +40,8 @@ def get_name():
     if request.method == "GET":
         args = request.args.to_dict()
         try:
-            sql = "SELECT userId FROM User WHERE name =%s"
-            data = mysqlConnector.execute(sql, args["name"])
-            if len(data) > 0:
+            exist = crud.check_user_name(args["name"])
+            if exist:
                 return "Exist"
             else:
                 return "Not exist"
@@ -60,16 +59,11 @@ def register():
     if request.method == "POST":
         form = request.get_json()
         try:
-            sql = "INSERT INTO User (name, password) VALUES (%s,%s)"
-            param = (form["name"], form["password"])
-            mysqlConnector.execute(sql, param)
-            sql = "SELECT userId FROM User WHERE name =%s"
-            data = mysqlConnector.execute(sql, form["name"])
-            return_json = {"user_id": None, "added": 0}
-            if data:
-                return_json["user_id"] = int(data[0][0])
-                return_json["added"] = 1
-            return jsonify(return_json)
+            return_json = crud.add_user(form["name"], form["password"])
+            if return_json:
+                return jsonify(return_json)
+            else:
+                return "Failed"
         except:
             return "Failed"
 
@@ -87,26 +81,21 @@ def basicInfo():
     if request.method == "GET":
         args = request.args.to_dict()
         try:
-            sql = "SELECT * FROM User WHERE userId=" + str(args["user_id"])
-            data = mysqlConnector.execute(sql)[0]
-            if data:
-                info = dataParser.User(data)
-                return_json = {
-                    "user_name": info.name,
-                    "user_motto": info.motto,
-                    "learned_days": info.learnedDays
-                }
+            return_json = crud.get_user_detail(int(args["user_id"]))
+            if return_json:
                 return jsonify(return_json)
+            else:
+                return "Failed"
         except:
             return "Failed"
 
     if request.method == "POST":
         form = request.get_json()
         try:
-            sql = "UPDATE User SET name=%s, motto=%s WHERE userId =" + str(form["user_id"])
-            param = (form["name"], form["user_motto"])
-            mysqlConnector.execute(sql, param)
-            return "Success"
+            if crud.edit_user_detail(int(form["user_id"]), form["name"], form["user_motto"]):
+                return "Success"
+            else:
+                return "Failed"
         except:
             return "Failed"
 
@@ -117,13 +106,12 @@ def basicInfo():
 # review_list: 今日所有需要复习的课文，每个课文信息中包含是否已背诵
 @app.route('/study/schedule', methods=["GET"])
 def schedule():
-    # TODO：code
     if request.method == "GET":
         args = request.args.to_dict()
         try:
             userId = args["user_id"]
-            new_list = crud.get_new_list(userId)
-            review_list = crud.get_review_list(userId)
+            new_list = crud.get_new_list(int(userId))
+            review_list = crud.get_review_list(int(userId))
             result = {
                 "new_list": new_list,
                 "review_list": review_list
@@ -283,6 +271,7 @@ def random_poems():
         except:
             return "Failed"
 
+
 # 语音功能
 @app.route('/reply', methods=["POST"])
 def response():
@@ -291,10 +280,11 @@ def response():
         try:
             user_id = int(form["user_id"])
             text = form["text"]
-            is_finished, response = reply(user_id, text)
-            return jsonify({"is_finished": is_finished, "response": response})
+            is_finished, response_text = reply(user_id, text)
+            return jsonify({"is_finished": is_finished, "response": response_text})
         except:
             return "Failed"
+
 
 if __name__ == '__main__':
     app.run()
