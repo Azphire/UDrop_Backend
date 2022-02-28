@@ -201,7 +201,7 @@ def update_new_list(user_id: int, new_list: list):
 def get_static_path():
     current_path = os.getcwd()
     base, current_dir = os.path.split(current_path)
-    if current_dir == 'UDrop_Backend':
+    if current_dir == 'UDrop_Backend' or current_dir == 'UDrop':
         return os.path.join(current_path, "static")
     else:
         return os.path.join(base, "static")

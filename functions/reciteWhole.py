@@ -3,9 +3,11 @@ import re
 import difflib
 from typing import Tuple
 from data.remoteData import get_poem_by_author, get_passage_by_id, get_passage_by_title
+from slotMatching import interruptMatch
 
 # BIAODIAN='，|。|？|！|、|,|\.|?|!'
 BIAODIAN='，|。|,|\.|？|\?|！|\!'
+interrupt_words = ["不背", "结束", "停"]
 
 
 def getErrMsg(text1, text2):
@@ -45,6 +47,9 @@ def start_full_reciting(title: str, author: str) -> Tuple[int, str]:
 
 
 def recite_whole(passage_id: int, ans: str) -> Tuple[bool, dict, str]:
+    if len(ans) < 10:
+        if interruptMatch.match(ans, interrupt_words):
+            return True, {}, "好的，背诵结束。"
     passage = get_passage_by_id(passage_id)
     ans = [s for s in re.split(BIAODIAN, ans) if s.strip() != '']
     sentences = [s for s in re.split(BIAODIAN, passage["content"]) if s.strip() != '']
