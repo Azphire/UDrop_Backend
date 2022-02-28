@@ -1,5 +1,6 @@
 import unittest
 from data.remoteData import *
+from slotMatching.textMatch import match
 
 
 class MyTestCase(unittest.TestCase):
@@ -15,6 +16,8 @@ class MyTestCase(unittest.TestCase):
             data.pop(0)
             print(data)
 
+    def test_match(self):
+        print(match("李白"))
 
 
 if __name__ == '__main__':

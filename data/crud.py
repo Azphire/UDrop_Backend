@@ -209,7 +209,7 @@ def get_static_path():
 
 def get_all_passage_titles():
     file = os.path.join(get_static_path(), "passages.txt")
-    with open(file, 'r') as f:
+    with open(file, 'r', encoding='GBK') as f:
         data = f.read().split(" ")
     data.pop(0)
     return data
@@ -217,7 +217,7 @@ def get_all_passage_titles():
 
 def get_all_poem_titles():
     file = os.path.join(get_static_path(), "poems.txt")
-    with open(file, 'r') as f:
+    with open(file, 'r', encoding='GBK') as f:
         data = f.read().split(" ")
     data.pop(0)
     return data
@@ -225,7 +225,7 @@ def get_all_poem_titles():
 
 def get_all_author_names():
     file = os.path.join(get_static_path(), "authors.txt")
-    with open(file, 'r') as f:
+    with open(file, 'r', encoding='GBK') as f:
         data = f.read().split(" ")
     data.pop(0)
     return data
