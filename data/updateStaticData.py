@@ -33,3 +33,5 @@ def updateStatic():
         f.write(titles)
 
     print("Static Updated")
+
+updateStatic()

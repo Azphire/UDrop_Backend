@@ -31,7 +31,7 @@ def add_user(name: str, password: str) -> dict:
     if data:
         return_dict["user_id"] = int(data[0][0])
         return_dict["added"] = 1
-        return return_json
+        return return_dict
 
 
 def get_user_detail(user_id: int) -> dict:
