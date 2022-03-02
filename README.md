@@ -50,8 +50,8 @@ uwsgi --http-socket :5001 --wsgi-file app.py --callable app &
 - POST
 - form: \[name: String, password: String]
 - return:
-  - user_id: Integer
-  - added: Integer: 0, new user added; 1, not added (exist)
+  - success: Yes
+  - userId: Integer
 
 #### 1.2 check_existed_user
 

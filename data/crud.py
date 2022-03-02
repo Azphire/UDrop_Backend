@@ -27,10 +27,10 @@ def add_user(name: str, password: str) -> dict:
     mysqlConnector.execute(sql, param)
     sql = "SELECT userId FROM User WHERE name =%s"
     data = mysqlConnector.execute(sql, name)
-    return_dict = {"user_id": None, "added": 0}
+    return_dict = {"userId": None, "success": "No"}
     if data:
-        return_dict["user_id"] = int(data[0][0])
-        return_dict["added"] = 1
+        return_dict["userId"] = int(data[0][0])
+        return_dict["success"] = "Yes"
         return return_dict
 
 
