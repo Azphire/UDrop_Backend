@@ -11,3 +11,5 @@ class Function(Enum):
     authorRecite = 5
     question = 6
     game = 7
+    review = 8
+    newLearn = 9

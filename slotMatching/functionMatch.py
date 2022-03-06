@@ -1,5 +1,8 @@
 from data.remoteData import *
 from utils.functionList import Function
+from slotMatching import interruptMatch
+
+interrupt_words = ["不背", "重新", "不选", "结束", "停", "终止"]
 
 
 class FunctionMatch:
@@ -16,7 +19,9 @@ class FunctionMatch:
                 "random": 0,
                 "question": 0,
                 "recite": 0,
-                "game": 0
+                "game": 0,
+                "new": 0,
+                "review": 0,
             }
         else:
             self.functionWords = function_words
@@ -28,7 +33,9 @@ class FunctionMatch:
             "random": ["随机", "随便", "都行", "任意"],
             "question": ["问答", "提问", "问题"],
             "recite": ["背"],
-            "game": ["游戏", "娱乐", "玩"]
+            "game": ["游戏", "娱乐", "玩"],
+            "new": ["学习", "新学"],
+            "review": ["复习", "温习"],
         }
         self.compose = {
             Function.passageFullRecite: {"propose": False, "title": ""},
@@ -125,6 +132,18 @@ class FunctionMatch:
 
         # random only support for sentence
         if self.functionWords["random"] == 1:
+            if self.functionWords["new"] == 1:
+                reply = {
+                    "function": Function.newLearn.value,
+                    "random": 1
+                }
+                return True, reply, ""
+            if self.functionWords["review"] == 1:
+                reply = {
+                    "function": Function.review.value,
+                    "random": 1
+                }
+                return True, reply, ""
             if passage_or_poem:
                 if self.functionWords["passage"] == 1:
                     reply = {
@@ -138,20 +157,39 @@ class FunctionMatch:
                         "title": "random"
                     }
                     return True, reply, ""
-            else:
-                reply = {
-                    "function": Function.choosing.value,
-                    "detail_words": self.detailWords,
-                    "function_words": self.functionWords
-                }
-                return False, reply, "请问您要背古诗还是课文呢？"
 
-        # 填充不齐全，分别组成询问缺失信息的询问
+        if interruptMatch.match(self.text, interrupt_words):
+            return True, {}, "interrupt"
+
+        #  填充不齐全，分别组成询问缺失信息的询问
         reply = {
             "function": Function.choosing.value,
             "detail_words": self.detailWords,
             "function_words": self.functionWords
         }
+
+        if has_title and not sentence_or_whole:
+            response = "全文背诵还是逐句背诵呢？"
+            return False, reply, response
+
+        # 学习和复习
+        if self.functionWords["new"] == 1:
+            reply = {
+                "function": Function.newLearn.value,
+                "random": 0
+            }
+            return True, reply, ""
+
+        if self.functionWords["review"] == 1:
+            reply = {
+                "function": Function.review.value,
+                "random": 0
+            }
+            return True, reply, ""
+
+        if self.functionWords["random"] == 1:
+            return False, reply, "请问您要背古诗还是课文呢？"
+
         if not has_title and not sentence_or_whole and not passage_or_poem and self.functionWords["recite"] == 0:
             return False, reply, "你可以选择背书，题目问答，或者游戏。"
 
@@ -163,8 +201,6 @@ class FunctionMatch:
                 response += "要背哪首诗呢，你也可以指定作者，或者选择随机。"
             else:
                 response += "要背什么呢，你可以指定课文、古诗，或者选择随机。"
-        if not sentence_or_whole:
-            response += "全文背诵还是逐句背诵呢？"
         return False, reply, response
 
     def poems_match(self):
@@ -212,4 +248,3 @@ class FunctionMatch:
         elif "author" in self.detailWords.keys():
             self.compose[Function.authorRecite]["name"] = self.detailWords["author"]
             self.compose[Function.authorRecite]["compose"] = True
-

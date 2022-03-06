@@ -5,6 +5,9 @@ from functions.playGame import play_game
 from functions.mainFunction import reply
 from data.memoryData import set_user_data, get_user_data, remove_user_data
 from utils.functionList import Function
+from utils.errorCheck import *
+import difflib
+
 import unittest
 
 class MyTestCase(unittest.TestCase):
@@ -92,6 +95,26 @@ class MyTestCase(unittest.TestCase):
         user_id = 1
         remove_user_data(user_id)
         reply(1, "李白的诗")
+
+    def test_pinyin(self):
+        print(pinyin_is_include("呼儿将出唤美酒", "五花马，千金裘，呼儿将出换美酒"))
+        print(pinyin_is_include("呼儿将唤美酒", "呼儿将出换美酒"))
+
+    def test_recite_whole_1(self):
+        recite = "窗前明月光，疑是地上霜。举头望明月，低头思故乡。"
+        print(recite_whole(2, recite))
+
+    def test_diff(self):
+        text1 = ["chuangqianmingyueguang", "yishidishangshuang", "jutouwangmingyue", "ditousiguxiang"]
+        text2 = ["chuangqianmingyueguang", "yishidishangshalaizhe", "wangle", "jutouwangmingyue","shenme"]
+        print(list(difflib.Differ().compare(text1, text2)))
+        print(list(difflib.context_diff(text1, text2)))
+
+    def test_list(self):
+        l = [i for i in range(5)]
+        print(l)
+        print(l[2:4])
+
 
 if __name__ == '__main__':
     unittest.main()

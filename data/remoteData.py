@@ -2,7 +2,8 @@ import json
 import random
 from data.crud import get_all_author_names, get_all_passage_titles, get_all_poem_titles, \
     get_passage_detail, get_passage, get_a_random_passage, get_a_random_poem, get_passages_by_author, \
-    get_game, get_a_random_game_id, get_a_random_question, get_answer, add_review_item
+    get_game, get_a_random_game_id, get_a_random_question, get_answer, add_review_item, \
+    get_new_list, get_review_list
 
 
 def get_passages() -> list:
@@ -37,6 +38,24 @@ def get_poem_by_author(author: str) -> dict:
 def get_passage_by_title(title: str) -> dict:
     passage = get_passage_detail(title)
     return passage.to_dict()
+
+
+def get_new_list_titles(user_id: int) -> list:
+    new_list = get_new_list(user_id)
+    titles = []
+    for item in new_list:
+        if item["done"] == 0:
+            titles.append(item["title"])
+    return titles
+
+
+def get_review_list_titles(user_id: int) -> list:
+    review_list = get_review_list(user_id)
+    titles = []
+    for item in review_list:
+        if item["done"] == 0:
+            titles.append(item["title"])
+    return titles
 
 
 def get_game_by_id(game_id: int) -> dict:

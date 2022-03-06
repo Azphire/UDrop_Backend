@@ -6,7 +6,9 @@ from functions.reciteWhole import start_full_reciting, recite_whole
 from functions.reciteBySentence import start_sentence_reciting, recite_by_sentence
 from functions.playGame import start_play_game, play_game
 from functions.answerQuestion import start_question, answer_question
+from functions.learningPlan import plan_list, match_list
 from data.remoteData import add_review
+
 
 def reply(user_id: int, request: str) -> Tuple[bool, str]:
     # get redis data
@@ -20,12 +22,40 @@ def reply(user_id: int, request: str) -> Tuple[bool, str]:
         is_matched, user_data, response = matcher.match()
         # matching succeeded, set user data, reload user_data, and go on
         if is_matched:
+            if response == "interrupt":
+                return True, "你可以选择其他功能或者退出当前页面。"
             user_data["start"] = 0
             set_user_data(user_id, user_data)
         # matching failed, set user data and return reply
         else:
             set_user_data(user_id, user_data)
             return False, response
+
+    # plan choosing
+    if user_data["function"] == Function.review.value or user_data["function"] == Function.newLearn.value:
+        if user_data["start"] == 0:
+            user_data["start"] = 1
+            result = plan_list(user_id, user_data["function"])
+            if result["interrupt"]:
+                remove_user_data(user_id)
+                return True, result["reply"] + "你可以选择其他功能或者退出当前页面。"
+            else:
+                user_data["match_data"] = {"function_value": user_data["function"]}
+                set_user_data(user_id, user_data)
+                return False, result["reply"]
+        else:
+            match_data = match_list(user_id, user_data["match_data"], request)
+            if match_data["interrupt"]:
+                remove_user_data(user_id)
+                return True, "你可以选择其他功能或者退出当前页面。"
+            if match_data["function_value"] != user_data["function"]:
+                user_data["function"] = match_data["function_value"]
+                user_data["title"] = match_data["title"]
+                user_data["start"] = 0
+            else:
+                user_data["match_data"] = match_data
+                set_user_data(user_id, user_data)
+                return False, match_data["reply"]
 
     # FullRecite
     if user_data["function"] == Function.passageFullRecite.value \
@@ -41,7 +71,7 @@ def reply(user_id: int, request: str) -> Tuple[bool, str]:
             if not correct:
                 add_review(user_id, user_data["title"])
             remove_user_data(user_id)
-            return True, response
+            return True, response + "你可以选择其他功能或者退出当前页面。"
 
     # SentenceRecite
     if user_data["function"] == Function.passageSentenceRecite.value \
@@ -65,7 +95,7 @@ def reply(user_id: int, request: str) -> Tuple[bool, str]:
 
         if is_finished:
             remove_user_data(user_id)
-            return True, response
+            return True, response + "你可以选择其他功能或者退出当前页面。"
         else:
             user_data["sentence_id"] = sentence_id
             set_user_data(user_id, user_data)
@@ -82,7 +112,7 @@ def reply(user_id: int, request: str) -> Tuple[bool, str]:
         is_finished, plot_id, response = play_game(user_data["game_id"], user_data["plot_id"], request)
         if is_finished:
             remove_user_data(user_id)
-            return True, response
+            return True, response + "你可以选择其他功能或者退出当前页面。"
         else:
             user_data["plot_id"] = plot_id
             set_user_data(user_id, user_data)
@@ -99,4 +129,4 @@ def reply(user_id: int, request: str) -> Tuple[bool, str]:
         else:
             yes, response = answer_question(user_data["question_id"], request)
             remove_user_data(user_id)
-            return True, response
+            return True, response + "你可以选择其他功能或者退出当前页面。"

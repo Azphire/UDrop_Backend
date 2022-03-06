@@ -1,6 +1,6 @@
 import json
 from connection.redisConnector import get_redis_connection
-ExpireTime = 300
+ExpireTime = 100
 
 
 def get_user_data(user_id: int):
