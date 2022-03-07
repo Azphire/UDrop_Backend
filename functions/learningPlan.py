@@ -36,10 +36,10 @@ def plan_list(user_id: int, function_value: int) -> dict:
 
 def match_list(user_id: int, match_data: dict, text: str) -> dict:
     if len(match_data) == 1:
-        match_data["reply"] = ''
         match_data["title"] = ''
         match_data["mode"] = ''
         match_data["interrupt"] = False
+    match_data["reply"] = ''
 
     if match_data["title"] == '':
         if match_data["function_value"] == Function.review.value:
