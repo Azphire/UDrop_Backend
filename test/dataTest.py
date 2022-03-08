@@ -20,5 +20,9 @@ class MyTestCase(unittest.TestCase):
         print(match("李白"))
 
 
+    def test_done_new_plan(self):
+        print(done_a_new_plan(2, 483))
+
+
 if __name__ == '__main__':
     unittest.main()

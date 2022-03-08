@@ -103,5 +103,6 @@ class CRUDTest(unittest.TestCase):
     def test_check(self):
         print(check_collection(3, "静夜思"))
 
+
 if __name__ == '__main__':
     unittest.main()

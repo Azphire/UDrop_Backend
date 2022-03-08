@@ -3,7 +3,7 @@ import random
 from data.crud import get_all_author_names, get_all_passage_titles, get_all_poem_titles, \
     get_passage_detail, get_passage, get_a_random_passage, get_a_random_poem, get_passages_by_author, \
     get_game, get_a_random_game_id, get_a_random_question, get_answer, add_review_item, \
-    get_new_list, get_review_list, add_collection
+    get_new_list, get_review_list, add_collection, done_new_plan, update_review_list
 
 
 def get_passages() -> list:
@@ -82,5 +82,29 @@ def add_new_collection(user_id: int, passage_id: int) -> str:
     title = get_passage(passage_id)["title"]
     if add_collection(user_id, title):
         return title + '已加入收藏。'
+    else:
+        return ''
+
+
+def done_a_new_plan(user_id: int, passage_id: int) -> str:
+    title = get_passage(passage_id)["title"]
+    if done_new_plan(user_id, title):
+        return '学习计划' + title + '已完成。'
+    else:
+        return ''
+
+
+def done_a_review_plan(user_id: int, passage_id: int) -> str:
+    title = get_passage(passage_id)["title"]
+    review_today = get_review_list(user_id)
+    done = False
+    for i in range(len(review_today)):
+        if review_today[i]["title"] == title:
+            review_today[i]["done"] = 1
+            done = True
+            break
+    if done:
+        update_review_list(user_id, review_today)
+        return '复习计划' + title + '已完成。'
     else:
         return ''

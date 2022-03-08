@@ -7,7 +7,7 @@ from functions.reciteBySentence import start_sentence_reciting, recite_by_senten
 from functions.playGame import start_play_game, play_game
 from functions.answerQuestion import start_question, answer_question
 from functions.learningPlan import plan_list, match_list
-from data.remoteData import add_review, add_new_collection
+from data.remoteData import add_review, add_new_collection, done_a_new_plan, done_a_review_plan
 
 finish_response = "你可以选择其他功能或者退出当前页面。"
 
@@ -50,6 +50,7 @@ def reply(user_id: int, request: str) -> Tuple[bool, str]:
                 remove_user_data(user_id)
                 return True, finish_response
             if match_data["function_value"] != user_data["function"]:
+                user_data["pre_function"] = user_data["function"]
                 user_data["function"] = match_data["function_value"]
                 user_data["title"] = match_data["title"]
                 user_data["start"] = 0
@@ -71,8 +72,14 @@ def reply(user_id: int, request: str) -> Tuple[bool, str]:
             correct, res, response = recite_whole(user_data["passage_id"], request)
             if not correct:
                 add_review(user_id, user_data["title"])
+            add = ''
+            if 'pre_function' in user_data:
+                if user_data["pre_function"] == Function.review.value:
+                    add += done_a_review_plan(user_id, user_data["passage_id"])
+                if user_data["pre_function"] == Function.newLearn.value:
+                    add += done_a_new_plan(user_id, user_data["passage_id"])
             remove_user_data(user_id)
-            return True, response + finish_response
+            return True, response + add + finish_response
 
     # SentenceRecite
     if user_data["function"] == Function.passageSentenceRecite.value \
@@ -98,7 +105,12 @@ def reply(user_id: int, request: str) -> Tuple[bool, str]:
             add = ''
             if response == '恭喜你，背诵完成！':
                 # 加收藏
-                add = add_new_collection(user_id, user_data["passage_id"])
+                add += add_new_collection(user_id, user_data["passage_id"])
+            if 'pre_function' in user_data:
+                if user_data["pre_function"] == Function.review.value:
+                    add += done_a_review_plan(user_id, user_data["passage_id"])
+                if user_data["pre_function"] == Function.newLearn.value:
+                    add += done_a_new_plan(user_id, user_data["passage_id"])
             remove_user_data(user_id)
             return True, response + add + finish_response
         else:

@@ -199,6 +199,25 @@ def update_new_list(user_id: int, new_list: list):
         return True
 
 
+def done_new_plan(user_id: int, title: str):
+    sql = "SELECT list FROM newList WHERE userId=%s"
+    data = mysqlConnector.execute(sql, user_id)[0][0]
+    if data:
+        new_list = json.loads(data)
+        done = False
+        for i in range(len(new_list)):
+            if new_list[i]["title"] == title:
+                new_list[i]["done"] = 1
+                done = True
+                break
+        if done:
+            sql = "UPDATE newList SET list=%s WHERE userId=%s"
+            mysqlConnector.execute(sql, (json.dumps(new_list), user_id))
+            return True
+        else:
+            return False
+
+
 def get_static_path():
     current_path = os.getcwd()
     base, current_dir = os.path.split(current_path)
