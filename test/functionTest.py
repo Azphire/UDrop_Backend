@@ -115,6 +115,9 @@ class MyTestCase(unittest.TestCase):
         print(l)
         print(l[2:4])
 
+    def test_split(self):
+        print("行路难·其一".split('·'))
+
 
 if __name__ == '__main__':
     unittest.main()

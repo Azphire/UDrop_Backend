@@ -206,10 +206,22 @@ class FunctionMatch:
     def poems_match(self):
         poems = get_poems()
         for each in poems:
-            if self.text.find(each) != -1:
-                # 检索到诗名
-                self.detailWords["poem"] = each
-                return True
+            if '·' not in each:
+                if self.text.find(each) != -1:
+                    # 检索到诗名
+                    self.detailWords["poem"] = each
+                    return True
+            else:
+                title = each.split('·')
+                matched = True
+                for t in title:
+                    if self.text.find(t) == -1:
+                        matched = False
+                        break
+                if matched:
+                    # 检索到诗名
+                    self.detailWords["poem"] = each
+                    return True
         return False
 
     def passages_match(self):
