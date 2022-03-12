@@ -3,8 +3,7 @@ import random
 from data.crud import get_all_author_names, get_all_passage_titles, get_all_poem_titles, \
     get_passage_detail, get_passage, get_a_random_passage, get_a_random_poem, get_passages_by_author, \
     get_game, get_a_random_game_id, get_a_random_question, get_answer, add_review_item, \
-    get_new_list, get_review_list, add_collection, done_new_plan, update_review_list
-
+    get_new_list, get_review_list, add_collection, done_new_plan, update_review_list, get_five_question
 
 def get_passages() -> list:
     return get_all_passage_titles()
@@ -68,6 +67,10 @@ def get_random_game() -> int:
 
 def get_question_random() -> dict:
     return get_a_random_question()
+
+
+def get_random_questions() -> list:
+    return get_five_question()
 
 
 def get_answer_by_id(question_id: int) -> str:

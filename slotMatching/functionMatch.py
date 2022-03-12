@@ -176,14 +176,14 @@ class FunctionMatch:
         if self.functionWords["new"] == 1:
             reply = {
                 "function": Function.newLearn.value,
-                "random": 0
+                "random": self.functionWords["random"]
             }
             return True, reply, ""
 
         if self.functionWords["review"] == 1:
             reply = {
                 "function": Function.review.value,
-                "random": 0
+                "random": self.functionWords["random"]
             }
             return True, reply, ""
 

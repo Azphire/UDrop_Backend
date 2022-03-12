@@ -318,3 +318,16 @@ def get_answer(question_id: int) -> str:
         answer = data[0][0]
         return answer
 
+
+def get_five_question() -> list:
+    sql = "SELECT question,answer FROM CHNQuestion ORDER BY RAND() LIMIT 5"
+    data = mysqlConnector.execute(sql)
+    if data:
+        question_list = []
+        for item in data:
+            question = {
+                "question": item[0],
+                "answer": item[1]
+            }
+            question_list.append(question)
+        return question_list

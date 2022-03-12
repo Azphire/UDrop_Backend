@@ -34,7 +34,7 @@ def reply(user_id: int, request: str) -> Tuple[bool, str]:
 
     # plan choosing
     if user_data["function"] == Function.review.value or user_data["function"] == Function.newLearn.value:
-        if user_data["start"] == 0:
+        if user_data["start"] == 0 and user_data["random"] == 0:
             user_data["start"] = 1
             result = plan_list(user_id, user_data["function"])
             if result["interrupt"]:
@@ -45,6 +45,7 @@ def reply(user_id: int, request: str) -> Tuple[bool, str]:
                 set_user_data(user_id, user_data)
                 return False, result["reply"]
         else:
+            user_data["start"] = 1
             match_data = match_list(user_id, user_data["match_data"], request)
             if match_data["interrupt"]:
                 remove_user_data(user_id)
@@ -138,12 +139,17 @@ def reply(user_id: int, request: str) -> Tuple[bool, str]:
     # Question
     if user_data["function"] == Function.question.value:
         if user_data["start"] == 0:
-            question_id, response = start_question()
+            question_list, response = start_question()
             user_data["start"] = 1
-            user_data["question_id"] = question_id
+            user_data["question_list"] = question_list
             set_user_data(user_id, user_data)
             return False, response
         else:
-            yes, response = answer_question(user_data["question_id"], request)
-            remove_user_data(user_id)
-            return True, response + finish_response
+            is_finished, question_list, response = answer_question(user_data["question_list"], request)
+            if is_finished:
+                remove_user_data(user_id)
+                return True, response + finish_response
+            else:
+                user_data["question_list"] = question_list
+                set_user_data(user_id, user_data)
+                return False, response
