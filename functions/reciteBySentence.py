@@ -3,7 +3,7 @@ import re
 from typing import Tuple
 from data.remoteData import get_poem_random, get_passage_random, get_passage_by_id, get_passage_by_title, get_poem_by_author
 from slotMatching import interruptMatch
-from utils.errorCheck import getErrMsg, pinyin_is_same
+from utils.errorCheck import getErrMsg, pinyin_is_include
 
 
 ALL_POINT = '，|。|,|\.|？|\?|！|\!'
@@ -39,14 +39,27 @@ def recite_by_sentence(passage_id: int, sentence_num: int, text: str) -> Tuple[b
         reply += passage["title"] + "，" + passage["dynasty"] + "，" + passage["author"] + "。"
         reply += sentences[0]
         return False, 0, reply
-    
+
     total = len(sentences)
     ans = [s for s in re.split(ALL_POINT, text) if s.strip() != '']
     sentence = [s for s in re.split(COMMA, sentences[sentence_num]) if s.strip() != '']
-    res = getErrMsg(sentence, ans)
+    has_error = True
+    if len(sentence) <= len(ans):
+        res = getErrMsg(sentence, ans)
+        if len(res['-']) == 0 and len(res['!']) == 0:
+            has_error = False
+    else:
+        sum_sentence = ''
+        for s in sentence:
+            sum_sentence += s
+        sum_ans = ''
+        for a in ans:
+            sum_ans += a
+        if pinyin_is_include(sum_sentence, sum_ans):
+            has_error = False
 
     # 背诵正确
-    if len(res['-']) == 0 and len(res['!']) == 0:
+    if not has_error:
         # 背完了
         if sentence_num == total - 1: 
             reply = '恭喜你，背诵完成！'
