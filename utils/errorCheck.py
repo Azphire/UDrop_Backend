@@ -4,7 +4,7 @@ import difflib
 
 def getErrMsg(text1, text2):
     m = {'-': [], '!': []}
-    pinyin1 = ["".join(pypinyin.lazy_pinyin(text))for text in text1]
+    pinyin1 = ["".join(pypinyin.lazy_pinyin(text)) for text in text1]
     pinyin2 = ["".join(pypinyin.lazy_pinyin(text)) for text in text2]
     diff_list = list(difflib.context_diff(pinyin1, pinyin2))
     if diff_list:

@@ -44,15 +44,23 @@ def match_list(user_id: int, match_data: dict, text: str) -> dict:
     if match_data["title"] == '':
         if match_data["function_value"] == Function.review.value:
             titles = get_review_list_titles(user_id)
-            for title in titles:
-                if title in text:
-                    match_data["title"] = title
-                    break
         else:
             titles = get_new_list_titles(user_id)
-            for title in titles:
-                if title in text:
-                    match_data["title"] = title
+        for each in titles:
+            if '·' not in each:
+                if each in text:
+                    match_data["title"] = each
+                    break
+            else:
+                title = each.split('·')
+                matched = True
+                for t in title:
+                    if t not in text:
+                        matched = False
+                        break
+                if matched:
+                    # 检索到诗名
+                    match_data["title"] = each
                     break
 
     if match_data["title"] == '':
