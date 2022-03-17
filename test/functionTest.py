@@ -6,6 +6,7 @@ from functions.mainFunction import reply
 from data.memoryData import set_user_data, get_user_data, remove_user_data
 from utils.functionList import Function
 from utils.errorCheck import *
+from utils import numberTransform
 import difflib
 
 import unittest
@@ -117,6 +118,14 @@ class MyTestCase(unittest.TestCase):
 
     def test_split(self):
         print("行路难·其一".split('·'))
+
+    def test_number_trans(self):
+        while True:
+            num = input("输入数字：")
+            print(numberTransform.trans(num))
+
+    def test_num_replace(self):
+        print(numberTransform.replace_num("会须一饮300杯"))
 
 
 if __name__ == '__main__':
